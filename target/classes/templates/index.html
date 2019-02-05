@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/searchBarStyle.css">
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous">
+
+    </script>
+</head>
+<body>
+
+<div class="topnav">
+    <div class="search-container">
+            <input type="text" placeholder="Search.." id="search">
+            <button type="submit" onclick="loadTweets()"><i class="fa fa-search"></i></button>
+    </div>
+
+    <div id="tweets">
+    </div>
+
+</div>
+
+<div style="padding-left:16px">
+    <h2>Enter the keyword to find tweets</h2>
+</div>
+<script>
+
+    function loadTweets() {
+        let $wrapperDiv = $('#tweets');
+        console.log('yaaay');
+    }
+
+
+
+
+</script>
+</body>
+</html>

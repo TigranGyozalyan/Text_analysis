@@ -1,46 +1,90 @@
 package am.aca.twitter.text.analysis;
 
-import twitter4j.*;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
-import twitter4j.json.DataObjectFactory;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.net.ssl.HttpsURLConnection;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.util.ArrayList;
-import java.util.List;
+class Document {
 
-public class Test {
+    private String id, language, text;
 
-//
-//    ooauth.consumerKey=xNXX43bchvxaFQns5zHjrImPI
-//    oauth.consumerSecret=1aiCLwxU6dfvzxU52Ca1BBNO2ZmxbzLvNDGRbe1UUFXmGe01cv
-//    oauth.accessToken=1092318687162482688-F6BzAChEZQqArM0zrNz3fQfLeae6wm
-//    oauth.accessTokenSecret=CxdwzCtUyZRjtii2X0kXvSaLdj1PE7IAFxmq9PLPteHKB
+    public Document(String id, String language, String text){
+        this.id = id;
+        this.language = language;
+        this.text = text;
+    }
+}
 
-    public static void main(String[] args) throws TwitterException {
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("xNXX43bchvxaFQns5zHjrImPI")
-                .setOAuthConsumerSecret("1aiCLwxU6dfvzxU52Ca1BBNO2ZmxbzLvNDGRbe1UUFXmGe01cv")
-                .setOAuthAccessToken("1092318687162482688-F6BzAChEZQqArM0zrNz3fQfLeae6wm")
-                .setOAuthAccessTokenSecret("CxdwzCtUyZRjtii2X0kXvSaLdj1PE7IAFxmq9PLPteHKB");
-        cb.setJSONStoreEnabled(true);
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
-        Query query = new Query("test");
-        QueryResult result = twitter.search(query);
-        List<String> tweetTexts = new ArrayList<String>();
-        List<Status> tweets = result.getTweets();
-        for (int i = 0; i < 10; i++) {
-            Status status = tweets.get(i);
+class Documents {
+    private List<Document> documents;
 
+    public Documents() {
+        this.documents = new ArrayList<Document>();
+    }
+    public void add(String id, String language, String text) {
+        this.documents.add (new Document (id, language, text));
+    }
+}
 
-            System.out.println("============================");
-            tweetTexts.add(status.getText());
-            System.out.println(status.getText());
-            System.out.println("============================");
-            String json = DataObjectFactory.getRawJSON(tweets.get(i));
-            System.out.println(json);
+class GetSentiment {
 
+    static String accessKey = "033fe2d6ad344fa58540c6953c065402";
+
+    static String host = "https://eastasia.api.cognitive.microsoft.com";
+
+    static String path = "/text/analytics/v2.0/sentiment";
+
+    public static String GetSentiment (Documents documents) throws Exception {
+        String text = new Gson().toJson(documents);
+        byte[] encoded_text = text.getBytes("UTF-8");
+
+        URL url = new URL(host+path);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "text/json");
+        connection.setRequestProperty("Ocp-Apim-Subscription-Key", accessKey);
+        connection.setDoOutput(true);
+
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.write(encoded_text, 0, encoded_text.length);
+        wr.flush();
+        wr.close();
+
+        StringBuilder response = new StringBuilder ();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+        String line;
+        while ((line = in.readLine()) != null) {
+            response.append(line);
+        }
+        in.close();
+
+        return response.toString();
+    }
+
+    public static String prettify(String json_text) {
+        JsonParser parser = new JsonParser();
+        JsonObject json = parser.parse(json_text).getAsJsonObject();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(json);
+    }
+
+    public static void main (String[] args) {
+        try {
+            Documents documents = new Documents ();
+            documents.add ("1", "en", "I really enjoy the new XBox One S. It has a clean look, it has 4K/HDR resolution and it is affordable.");
+            documents.add ("2", "es", "Este ha sido un dia terrible, llegué tarde al trabajo debido a un accidente automobilistico.");
+
+            String response = GetSentiment (documents);
+            System.out.println (prettify (response));
+        }
+        catch (Exception e) {
+            System.out.println (e);
         }
     }
 }
