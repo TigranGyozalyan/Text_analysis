@@ -12,12 +12,13 @@ public class TweetMapper {
 
     public TweetDto getTweetDto(Tweet tweet) {
         TweetDto tweetDto = new TweetDto();
-
+        tweetDto.setId(tweet.getId());
         tweetDto.setAvatarUrl(tweet.getAvatarUrl());
         tweetDto.setCreatedAt(tweet.getCreatedAt());
         tweetDto.setTweetText(tweet.getTweetText());
         tweetDto.setUserName(tweet.getUserName());
         tweetDto.setUserScreenName(tweet.getUserScreenName());
+        tweetDto.setLang(tweet.getLang());
         return tweetDto;
     }
 

@@ -20,6 +20,7 @@ public class TwitterConfiguration {
                 .setOAuthConsumerSecret(CONSUMER_SECRET)
                 .setOAuthAccessToken(ACCESS_TOKEN)
                 .setOAuthAccessTokenSecret(ACCESS_SECRET);
+        cb.setTweetModeExtended(true);
         return cb.build();
     }
 

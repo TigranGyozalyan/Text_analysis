@@ -7,6 +7,25 @@ public class TweetDto {
     private String userName;
     private String userScreenName;
     private String createdAt;
+    private String lang;
+    private long id;
+
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getTweetText() {
         return tweetText;

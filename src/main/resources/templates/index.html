@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="css/searchBarStyle.css">
+    <link rel="stylesheet" href="css/tweetStyle.css">
     <script
             src="https://code.jquery.com/jquery-3.3.1.js"
             integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
@@ -13,8 +14,12 @@
 
 <div class="topnav">
     <div class="search-container">
-            <input type="text" placeholder="Search.." id="search">
-            <button type="submit" onclick="loadTweets()"><i class="fa fa-search"></i></button>
+        <input type="text" placeholder="Search.." id="search">
+        <button type="submit" onclick="loadTweets()"><i class="fa fa-search"></i></button>
+    </div>
+
+    <div style="padding-left:16px">
+        <h2>Enter the keyword to find tweets</h2>
     </div>
 
     <div id="tweets">
@@ -22,17 +27,56 @@
 
 </div>
 
-<div style="padding-left:16px">
-    <h2>Enter the keyword to find tweets</h2>
-</div>
 <script>
 
     function loadTweets() {
         let $wrapperDiv = $('#tweets');
-        console.log('yaaay');
+        let $tweetDiv = $('<div/>');
+        $tweetDiv.attr('class', 'tweet');
+        let searchKey = $('#search').val();
+        console.log(searchKey);
+        $.get('/search?keyword=' + searchKey, function (tweets) {
+            let jsonData = JSON.stringify(tweets);
+            console.log(jsonData);
+            // $.ajax({
+            //     url: "script.php",
+            //     method: "POST",
+            //     data: jsonData,
+            //     dataType: "application/json",
+            //     contentType : "application/json"
+            // };
+
+
+0
+            $wrapperDiv.empty();
+            tweets.forEach(function (tweet) {
+                let $tweetDiv = ($('<div/>').attr('class', 'tweet'));
+                //user Credentials
+                let $tweetUser = ($('<div/>').attr('class', 'tweet--user'));
+                let $avatar = $('<img/>').attr('class', 'tweet--user-avatar').attr('src', tweet.avatarUrl);
+                $tweetDiv.append($avatar);
+                let $divUserName = ($('<div/>').attr('class', 'tweet--user-name'));
+                let $spanObj = $('<span/>').append('@' + tweet.userScreenName);
+                $divUserName.append(tweet.userName).append($spanObj);
+                $tweetUser.append($avatar).append($divUserName);
+                $tweetDiv.append($tweetUser);
+
+                //body
+                let $tweetBody = $('<p/>').attr('class', 'tweet--body').html(tweet.tweetText);
+                $tweetDiv.append($tweetBody);
+                let $dateDiv = ($('<div/>').attr('class', 'tweet--time'));
+                $dateDiv.append(tweet.createdAt);
+                $tweetDiv.append($dateDiv);
+
+                let $source = $('<a/>').attr('href', 'https://twitter.com/' + tweet.userScreenName
+                    + '/status/' + tweet.id).attr('class', 'follow');
+                $source.append($('<i/>').attr('class', 'fa fa-twitter')).append('Go to Source');
+                $tweetDiv.prepend($source);
+                $wrapperDiv.append($tweetDiv);
+            });
+        })
+
     }
-
-
 
 
 </script>

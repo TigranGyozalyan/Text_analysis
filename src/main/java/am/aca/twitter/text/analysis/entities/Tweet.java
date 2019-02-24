@@ -7,14 +7,26 @@ public class Tweet {
     private String userName;
     private String userScreenName;
     private String createdAt;
+    private long id;
+    private String lang;
 
-
-    public Tweet(String tweetText, String avatarUrl, String userName, String userScreenName, String createdAt) {
+    public Tweet(long id, String lang, String tweetText, String avatarUrl, String userName, String userScreenName, String createdAt) {
+        this.id = id;
+        this.lang = lang;
         this.tweetText = tweetText;
         this.avatarUrl = avatarUrl;
         this.userName = userName;
         this.userScreenName = userScreenName;
         this.createdAt = createdAt;
+    }
+
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public String getTweetText() {
@@ -55,5 +67,13 @@ public class Tweet {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }
